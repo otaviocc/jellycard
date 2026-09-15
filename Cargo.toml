@@ -2,12 +2,14 @@
 name = "jellycard"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
 description = "Generate Jellyfin library card artwork: rounded text in a purple-to-cyan gradient on a transparent canvas."
 license = "MIT"
+repository = "https://github.com/otaviocc/jellycard"
 readme = "README.md"
 keywords = ["jellyfin", "artwork", "png", "gradient", "text"]
 categories = ["command-line-utilities", "multimedia::images"]
-exclude = ["CLAUDE.md", "Makefile", "rustfmt.toml"]
+exclude = ["CLAUDE.md", "Makefile", "rustfmt.toml", ".github/"]
 
 [[bin]]
 name = "jellycard"

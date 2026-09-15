@@ -27,6 +27,7 @@ cargo test render::               # the renderer's unit tests
 src/main.rs        CLI, slug, PNG encoding
 src/render.rs      everything about the card image
 assets/Fredoka.ttf embedded font, with its OFL licence beside it
+.github/workflows  CI on push and PR, release on a `v*.*.*` tag
 ```
 
 Dependencies are `png` and `swash`, nothing else.
@@ -96,6 +97,11 @@ already in the library.
 
 - Conventional Commits with a short imperative subject and a body explaining
   *why*. Stage paths explicitly — `git add -A` sweeps unrelated edits in.
+- A release is a `v*.*.*` tag whose version matches `Cargo.toml`; the tag
+  drives `release.yml`, which builds the four archives, publishes to crates.io
+  (`CARGO_REGISTRY_TOKEN`) and creates the GitHub release. Run the workflow by
+  hand first to rehearse everything up to the builds — publishing is one-way.
+  `rust-version` in `Cargo.toml` is what the `msrv` CI job checks against.
 - `README.md` is a **product page** for someone using the program, with no
   architecture section. A change to the CLI or the card style updates it in the
   same commit; a change to how the code works does not touch it.
