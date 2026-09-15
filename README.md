@@ -21,8 +21,12 @@ The file is written into the current directory, named after the library
 ## Install
 
 ```sh
-cargo install --path .
+cargo install jellycard --locked
 ```
+
+Or take a binary from the [latest
+release](https://github.com/otaviocc/jellycard/releases/latest): Linux x86-64
+and ARM64, a macOS universal binary, and Windows x86-64.
 
 ## License
 
