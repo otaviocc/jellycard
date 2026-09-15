@@ -21,6 +21,7 @@ The file is written into the current directory, named after the library
 ## Install
 
 ```sh
+brew install otaviocc/apps/jellycard
 cargo install jellycard --locked
 ```
 
