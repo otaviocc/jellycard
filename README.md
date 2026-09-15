@@ -3,6 +3,10 @@
 Generates Jellyfin library card artwork: bold rounded text in a purple-to-cyan
 horizontal gradient on a transparent background.
 
+<img width="300" height="167" alt="live_tv" src="https://github.com/user-attachments/assets/1a16f7f9-18cf-400f-9647-9a938a6ccc70" />
+<img width="300" height="167" alt="trailers" src="https://github.com/user-attachments/assets/545e53fd-372c-413d-aafc-d11fb0bd96d1" />
+<img width="300" height="167" alt="videos" src="https://github.com/user-attachments/assets/8e28eae9-9f1d-42af-8ea8-2846562396c2" />
+
 ## Usage
 
 ```sh
