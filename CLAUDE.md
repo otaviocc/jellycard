@@ -11,19 +11,32 @@ from a library name.
 make build                        # cargo build --release
 make test                         # cargo test
 make lint                         # cargo clippy --all-targets -- -D warnings
+make run                          # cargo run --release -- "4K Movies"
 cargo fmt --all -- --check
 make install                      # cargo install --path . --locked --force
+make uninstall                    # cargo uninstall jellycard
 
 cargo test render::               # the renderer's unit tests
 ```
 
 `fmt`, `lint` and `test` must all pass before a commit.
 
+## Layout
+
+```
+src/main.rs        CLI, slug, PNG encoding
+src/render.rs      everything about the card image
+assets/Fredoka.ttf embedded font, with its OFL licence beside it
+```
+
+Dependencies are `png` and `swash`, nothing else.
+
 ## Architecture
 
 `src/main.rs` is the whole control flow: it reads either a single argument or
 stdin (`-`, one name per non-empty line), slugs each name into a filename, and
-writes the PNG into the current directory.
+writes the PNG into the current directory. A name that slugs to nothing is an
+error; any failure exits non-zero, and bad usage exits 2.
 
 ```
 name → render::fit_font_size    binary search, largest size <= 300 that fits
@@ -37,31 +50,30 @@ The style is deliberately not configurable: a new card has to match the ones
 already in the Jellyfin library. Fredoka at variable weight 600 (embedded via
 `include_bytes!`), 1800×1000 transparent canvas, `#AA5CC3` → `#00A4DC` spanning
 the text's ink box, size 300 for every card and shrunk only when a name is too
-wide for the 10% side margins.
+wide for the 10% side margins or taller than 60% of the canvas.
 
-This replaces a Pillow script (`generate_card.py` in the `jellyfin-library-cards`
-skill), and the geometry is a port of it, so cards generated before and after
-line up:
+Two geometry decisions keep new cards lining up with the ones already on disk,
+and both look like omissions if you meet them cold:
 
 - **No shaping.** Glyphs are positioned from `hmtx` advances alone. Fredoka
-  keeps its kerning in `GPOS` and has no `kern` table, so Pillow's basic layout
-  applied none of it; running swash's shaper would set new cards tighter than
-  every card already on disk.
-- **Metric-based centring**, Pillow's `"mm"` anchor: the advance width and the
-  ascent/descent box are what get centred, not the ink, so every card shares one
-  baseline whatever letters its name uses.
-- Rasterization is swash rather than FreeType, so output is *visually* identical
-  but not byte-identical — ink lands within a pixel or two of the Python script.
-  `fit_font_size` does reproduce its sizes exactly (`Collections` → 283,
-  `Documentaries` → 210), and a change there is a regression, not a rounding
-  difference.
+  keeps its kerning in `GPOS` and has no `kern` table, so none of it applies;
+  running swash's shaper instead would set new cards tighter than every
+  existing card.
+- **Metric-based centring.** The advance width and the ascent/descent box are
+  what get centred, not the ink, so every card shares one baseline whatever
+  letters its name uses.
+
+`fit_font_size` is the part with exact expected values (`Collections` → 283,
+`Documentaries` → 210); a change there is a regression, not a rounding
+difference.
 
 ## Tests
 
 Unit tests live in a `mod tests` at the bottom of every source file. The
 renderer's tests pin the shared font size, the transparent canvas and the
-gradient endpoints; the fastest visual check against a reference is still to run
-the old Pillow script and compare alpha bounding boxes.
+gradient endpoints. Rasterization is not byte-pinned, so for a visual change
+compare the alpha bounding box of a freshly generated card against a card
+already in the library.
 
 ## Code conventions
 
